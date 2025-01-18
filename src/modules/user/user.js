@@ -1,5 +1,6 @@
 import { Router } from "express";
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import UserModel from "../../../DB/model/user.js";
 const router= Router();
 router.get('/', async (req, res) => {
@@ -22,6 +23,7 @@ router.put('/login', async (req, res) => {//make login
     if (!user) return res.status(404).json({message:"User not found, invalid email address"});
     const check = await bcrypt.compareSync(password,user.password); // password
     if (!check) return res.status(401).json({message:"Invalid password"}); 
-    return res.status(200).json({message:"success",user});
+    const token = jwt.sign({ id:user.id,email:user.email }, 'talahetnawi');
+    return res.status(200).json({message:"success",token});
 });
 export default router;
