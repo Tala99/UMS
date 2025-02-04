@@ -1,7 +1,7 @@
 import { Router } from "express";
-import bcrypt from 'bcryptjs';
 import UserModel from "../../../DB/model/user.js";
 import auth from "../../middleware/auth.js";
+import { sendEmail } from "../../utils/sendEmail.js";
 const router= Router();
 router.get('/', auth() ,async (req, res) => {
    // const users= await UserModel.findAll();
@@ -11,10 +11,11 @@ router.get('/', auth() ,async (req, res) => {
              attributes:["id","name","email"]
          }
         );
+        sendEmail(email);
          return res.status(200).json({message:"success",users});
       
    } catch (error) {
-      return res.status(500).json({message:"server error",error});
+      return res.status(500).json({message:"server error",error:error.stack});
    }
    
 });
@@ -28,7 +29,7 @@ router.delete('/:id', auth(), async (req,res) => {
   });
   return res.status(200).json({message:"User deleted successfully"});
    } catch (error) {
-      return res.status(500).json({message:"server error",error});
+      return res.status(500).json({message:"server error",error:error.stack});
    }
  
 });

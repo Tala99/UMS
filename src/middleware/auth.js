@@ -7,7 +7,7 @@ const auth=()=>{
             const {token}=req.headers;
             const decoded =jwt.verify(token,'talahetnawi');
                 if(decoded.role !=="admin"){
-                return res.status(403).json({message:"You are not authorized to delete this user"});
+                return res.status(403).json({message:"You are not authorized"});
              }
              next();
             //return res.json(decoded);
@@ -15,7 +15,7 @@ const auth=()=>{
          };
         
     } catch (error) {
-        return res.status(500).json({message:"server error",error});
+        return res.status(500).json({message:"server error",error:error.stack});
     }
  
 }
