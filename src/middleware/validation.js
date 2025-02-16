@@ -1,16 +1,21 @@
-const validation=(schema)=>{
+import { appError } from "../utils/appError.js";
+
+const validation = (schema) => {
 
 
-    return(req,res,next)=>{
-        const result=schema.validate(req.body,{abortEarly:false});// or .validate({name,email,password});
-        if(result.error) {
-            return res.status(400).json({message:"validation error",error:result.error.details});
+    return (req, res, next) => {
+
+        const inputData={...req.body, ...req.params};
+        const validateResult=schema.validate(inputData,{abortEarly:false});
+
+    
+        if (validateResult?.error) {
+            return next(new appError(val.error,400));
         }
-        else {
-            next();
-        }
-                
+        next();
     }
 
 }
+
+
 export default validation;

@@ -2,7 +2,8 @@ import UserModel from "../../../DB/model/user.js";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { sendEmail } from "../../utils/sendEmail.js";
-export const loginUser = async (req, res) => {
+import { appError } from "../../utils/appError.js";
+export const loginUser = async (req, res,next) => {
     //make login
 
     const { email, password } = req.body;
@@ -12,9 +13,11 @@ export const loginUser = async (req, res) => {
     // }
     //const user= await UserModel.findAll({where:{"email":email}});// always return array of usres
     const user = await UserModel.findOne({ where: { "email": email } }); //email
-    if (!user) return res.status(404).json({ message: "User not found, invalid email address" });
+    if (!user) 
+         return next(new appError ("invalid email",404));
+        //return res.status(404).json({ message: "User not found, invalid email address" });
     const check = await bcrypt.compareSync(password, user.password); // password
-    if (!check) return res.status(401).json({ message: "Invalid password" });
+    if (!check)  return next(new appError ("invalid password",400));
     const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, 'talahetnawi');
     sendEmail(email);
     return res.status(200).json({ message: "success", token });

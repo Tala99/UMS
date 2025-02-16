@@ -9,6 +9,11 @@ const initApp=(app)=>{
     app.use('/users',userRouter);
     app.use('/authentication',authRouter);
     app.use('/blogs',blogRouter);
+    app.use((err,req,res,next)=>{
+
+        return res.status(err.statusCode).json({message:err.message});
+
+    });
 
 
 
